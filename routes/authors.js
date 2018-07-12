@@ -2,9 +2,15 @@ const express = require("express");
 const router = express.Router();
 const Author = require("../models/author");
 const Book = require("../models/book");
+router.use(express.json()); //add here instead in export
 router.get("/", async (req, res, next) => {
-  const authors = await Author.find();
-  res.json(authors);
+  try {
+    const authors = await Author.find();
+    res.json(authors);
+  } catch (err) {
+    console.error("error ", err);
+    next(err);
+  }
 });
 router.get("/:id", async (req, res, next) => {
   try {
@@ -12,7 +18,7 @@ router.get("/:id", async (req, res, next) => {
     const booksByAuthor = await Book.find({
       authorId: req.params.id
     });
-    res.json({
+    res.status(200).json({
       ...authors.toJSON(),
       books: booksByAuthor
     });
@@ -34,4 +40,8 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-module.exports = router;
+// module.exports = router;
+module.exports = app => {
+  // app.use(express.json());
+  app.use("/authors", router);
+};

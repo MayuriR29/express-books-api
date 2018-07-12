@@ -20,7 +20,7 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use("/", index);
-app.use("/books", books);
-app.use("/authors", authors);
+books(app);
+authors(app);
 
 module.exports = app;

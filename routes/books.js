@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Book = require("../models/book");
 const Author = require("../models/author");
+router.use(express.json()); //add here instead in export
 /* GET books listing. */
 router.get("/", async (req, res, next) => {
   const books = await Book.find().populate("authorId"); //author here is from model
@@ -23,7 +24,9 @@ router.post("/", async (req, res, next) => {
     await newBook.save(); //things that hit database are async
     res.status(201).json({ message: "Book created successfully" });
   } catch (error) {
-    res.status({ message: "Book validation failed" });
+    res
+      .json({ message: "Book validation failed", err: error.message })
+      .status(404);
     console.error("error", error);
   }
 });
@@ -38,4 +41,8 @@ router.delete("/:id", async (req, res, next) => {
   res.json({ message: `delete book with id ${req.params.id}` });
 });
 
-module.exports = router;
+// module.exports = router;
+module.exports = app => {
+  // app.use(express.json());
+  app.use("/books", router);
+};
