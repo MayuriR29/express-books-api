@@ -3,12 +3,14 @@ const logger = require("morgan");
 const bodyParser = require("body-parser");
 
 const mongoose = require("mongoose");
-mongoose.connect("mongodb://localhost/mongoDB-books");
+const mongodb_uri =
+  process.env.MONGODB_URI || "mongodb://localhost/mongoDB-books";
 
 const index = require("./routes/index");
 const books = require("./routes/books");
 const authors = require("./routes/authors");
 
+mongoose.connect(mongodb_uri);
 const db = mongoose.connection;
 db.on("error", () => {
   console.error("An error has occured");
